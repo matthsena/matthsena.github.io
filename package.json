@@ -1,0 +1,16 @@
+{
+  "name": "matthsena.github.io",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:matthsena/matthsena.github.io.git",
+  "author": "Matheus <matheusalexandre.sena99@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "stylelint": "npx stylelint \"**/*.css\""
+  },
+  "devDependencies": {
+    "eslint": "^7.4.0",
+    "stylelint": "^13.6.1",
+    "stylelint-config-standard": "^20.0.0"
+  }
+}

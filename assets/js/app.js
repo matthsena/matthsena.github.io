@@ -5,6 +5,7 @@ const config = {
   background: '#000000',
   hexColors: {
     hexPurple: 0x7300ff,
+    hexLightPurple: 0x8119ff,
     hexGray: 0x454545,
     hexWhite: 0xffffff,
 
@@ -31,28 +32,21 @@ const init = async (width, height) => {
   render.autoClear = true;
   document.body.appendChild(render.domElement);
 
-  // controls.addEventListener('change', () => render.render(scene, camera));
-
   controls.enableDamping = true;
   controls.dampingFactor = 0.05;
-
-  controls.screenSpacePanning = false;
-
   controls.minDistance = 1;
-  controls.maxDistance = 50;
+  controls.maxDistance = 5;
 
-  controls.maxPolarAngle = Math.PI / 2;
-
-  const geometry = new THREE.BoxGeometry(1, 1, 1);
+  const geometry = new THREE.BoxGeometry(0.25, 0.25, 0.25);
   const material = new THREE.MeshLambertMaterial({ color: config.hexColors.hexPurple });
 
   const cubes = [];
 
-  for (let i = 0; i < 20; i += 1) {
+  for (let i = 0; i < 200; i += 1) {
     const c = new THREE.Mesh(geometry, material);
     c.position.x = (Math.random() - 0.5) * 10;
-    c.position.y = (Math.random() - 0.5) * 7;
-    c.position.z = (Math.random() - 0.5) * 5;
+    c.position.y = (Math.random() - 0.5) * 10;
+    c.position.z = (Math.random() - 0.5) * 10;
 
     const factor = (Math.random() >= 0.5) ? 1 : -1;
     cubes.push({ el: c, factor });
@@ -82,20 +76,38 @@ const init = async (width, height) => {
   };
 
   animate();
+
+  document.addEventListener('mousemove', _.debounce((e) => {
+    const vector = camera.position.clone();
+
+    if (e.screenX > width / 2) {
+      vector.x += 0.01;
+    } else {
+      vector.x -= 0.01;
+    }
+
+    if (e.screenY > height / 2) {
+      vector.y += 0.01;
+    } else {
+      vector.y -= 0.01;
+    }
+
+    camera.position.set(vector.x, vector.y, vector.z);
+  }, 5));
+
+  setInterval(() => {
+    if (material.color.getHex() === config.hexColors.hexPurple) {
+      material.color.setHex(config.hexColors.hexLightPurple);
+    } else {
+      material.color.setHex(config.hexColors.hexPurple);
+    }
+  }, 1000);
 };
 
-const debounce = (func, wait) => {
-  let timer = null;
-  return () => {
-    clearTimeout(timer);
-    timer = setTimeout(func, wait);
-  };
-};
-
-window.addEventListener('load', debounce(() => {
+window.addEventListener('load', _.debounce(() => {
   init(window.innerWidth, window.innerHeight);
 }, 500));
 
-window.addEventListener('resize', debounce(async () => {
+window.addEventListener('resize', _.debounce(async () => {
   init(window.innerWidth, window.innerHeight);
 }, 500));

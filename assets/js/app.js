@@ -5,6 +5,7 @@ const config = {
   background: '#000000',
   hexColors: {
     hexPurple: 0x7300ff,
+    hexLightPurple: 0x8119ff,
     hexGray: 0x454545,
     hexWhite: 0xffffff,
 
@@ -35,24 +36,6 @@ const init = async (width, height) => {
   controls.dampingFactor = 0.05;
   controls.minDistance = 1;
   controls.maxDistance = 5;
-
-  document.addEventListener('mousemove', _.debounce((e) => {
-    const vector = camera.position.clone();
-
-    if (e.screenX > width / 2) {
-      vector.x += 0.01;
-    } else {
-      vector.x -= 0.01;
-    }
-
-    if (e.screenY > height / 2) {
-      vector.y += 0.01;
-    } else {
-      vector.y -= 0.01;
-    }
-
-    camera.position.set(vector.x, vector.y, vector.z);
-  }, 5));
 
   const geometry = new THREE.BoxGeometry(0.25, 0.25, 0.25);
   const material = new THREE.MeshLambertMaterial({ color: config.hexColors.hexPurple });
@@ -93,6 +76,32 @@ const init = async (width, height) => {
   };
 
   animate();
+
+  document.addEventListener('mousemove', _.debounce((e) => {
+    const vector = camera.position.clone();
+
+    if (e.screenX > width / 2) {
+      vector.x += 0.01;
+    } else {
+      vector.x -= 0.01;
+    }
+
+    if (e.screenY > height / 2) {
+      vector.y += 0.01;
+    } else {
+      vector.y -= 0.01;
+    }
+
+    camera.position.set(vector.x, vector.y, vector.z);
+  }, 5));
+
+  setInterval(() => {
+    if (material.color.getHex() === config.hexColors.hexPurple) {
+      material.color.setHex(config.hexColors.hexLightPurple);
+    } else {
+      material.color.setHex(config.hexColors.hexPurple);
+    }
+  }, 1000);
 };
 
 window.addEventListener('load', _.debounce(() => {

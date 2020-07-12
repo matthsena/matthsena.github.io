@@ -1,3 +1,6 @@
+import * as THREE from '../../vendor/three.module.js';
+import { OrbitControls } from '../../vendor/OrbitControls.js';
+
 const config = {
   background: '#000000',
   hexColors: {
@@ -21,10 +24,24 @@ const init = async (width, height) => {
   const canvas = document.querySelector('#renderCanvas');
 
   const render = new THREE.WebGLRenderer({ canvas, antialias: true });
+  const controls = new OrbitControls(camera, render.domElement);
+
   render.setClearColor(config.background);
   render.setSize(width, height);
   render.autoClear = true;
   document.body.appendChild(render.domElement);
+
+  // controls.addEventListener('change', () => render.render(scene, camera));
+
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+
+  controls.screenSpacePanning = false;
+
+  controls.minDistance = 1;
+  controls.maxDistance = 50;
+
+  controls.maxPolarAngle = Math.PI / 2;
 
   const geometry = new THREE.BoxGeometry(1, 1, 1);
   const material = new THREE.MeshLambertMaterial({ color: config.hexColors.hexPurple });
@@ -32,7 +49,7 @@ const init = async (width, height) => {
   const cubes = [];
 
   for (let i = 0; i < 20; i += 1) {
-    c = new THREE.Mesh(geometry, material);
+    const c = new THREE.Mesh(geometry, material);
     c.position.x = (Math.random() - 0.5) * 10;
     c.position.y = (Math.random() - 0.5) * 7;
     c.position.z = (Math.random() - 0.5) * 5;
@@ -53,13 +70,15 @@ const init = async (width, height) => {
 
   const animate = () => {
     requestAnimationFrame(animate);
-    render.render(scene, camera);
+    controls.update();
 
     cubes.map((e) => {
       e.el.rotation.x += (Math.random() / 100) * e.factor;
       e.el.rotation.z += (Math.random() / 100) * e.factor;
       return null;
     });
+
+    render.render(scene, camera);
   };
 
   animate();

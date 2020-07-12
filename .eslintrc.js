@@ -12,5 +12,6 @@ module.exports = {
   },
   rules: {
     'no-undef': 'off',
+    'import/extensions': 'off',
   },
 };
